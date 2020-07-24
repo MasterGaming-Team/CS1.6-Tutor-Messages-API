@@ -1,0 +1,14 @@
+[hu]
+TUTOR_TUTMSG_LEVELUP = Gratulálunk! Sikeresen szintet léptél!^n Jelenlegi szinted: %d
+TUTOR_TUTMSG_MISSIONCOMPLETED = Sikeresen teljesítetted a [%L] küldetést!^n Jutalmad: [ %d Exp | %d MP ]
+TUTOR_TUTMSG_MISSIONUNLOCKED = Új küldetés elérhető! [%L]
+
+[en]
+TUTOR_TUTMSG_LEVELUP = Congratulations! You have successfully gained a level!^n Current level: %d
+TUTOR_TUTMSG_MISSIONCOMPLETED = You have successfully completed the [%L] mission!^n Prizes: [ %d Exp | %d MP ]
+TUTOR_TUTMSG_MISSIONUNLOCKED = New mission available! [%L]
+
+[def]
+TUTOR_TUTMSG_LEVELUP = 
+TUTOR_TUTMSG_MISSIONCOMPLETED = 
+TUTOR_TUTMSG_MISSIONUNLOCKED = 
