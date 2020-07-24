@@ -73,7 +73,22 @@ public check_tutor_messagelist(taskid)
 		return
 	}
 
-	
+	new lText[64]
+	ArrayGetString(arrayTutorMessageText, 0, lText, charsmax(lText))
+	new lType = ArrayGetCell(arrayTutorMessageType, 0)
+	new Float:lTime = ArrayGetCell(arrayTutorMessageTime, 0)
+	new lSoundEffect[64]
+	ArrayGetString(arrayTutorMessageSFX, 0, lSoundEffect, charsmax(lSoundEffect))
+
+	userSetTutorMessage(id, lText, lType)
+	userPlaySound(id, lSoundEffect)
+
+	ArrayDeleteItem(arrayTutorMessageText, 0)
+	ArrayDeleteItem(arrayTutorMessageType, 0)
+	ArrayDeleteItem(arrayTutorMessageTime, 0)
+	ArrayDeleteItem(arrayTutorMessageSFX, 0)
+
+	set_task(lTime, "check_tutor_messagelist", taskid)
 }
 
 public native_send(plugin_id, param_num)
@@ -86,7 +101,7 @@ public native_send(plugin_id, param_num)
 	new lText[TUTORTEXTSIZE]
 	get_string(2, lText, charsmax(lText))
 	new lType = get_param(3)
-	new lTime = get_param(4)
+	new Float:lTime = get_param_f(4)
 	new lSoundEffect[64]
 	get_string(5, lSoundEffect, charsmax(lSoundEffect))
 	new lPrimary = get_param(6)
