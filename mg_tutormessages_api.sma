@@ -2,7 +2,7 @@
 #include <amxmisc>
 #include <mg_levelsystem_api>
 #include <mg_missions_api>
-#include <mg_tutormessages_api_const>
+#include <mg_tutormessages_api>
 
 #define PLUGIN "[MG] Tutor Messages API"
 #define VERSION "1.0.0"
@@ -10,7 +10,14 @@
 
 #define TASKID_TUTOR	1
 
-#define TUTORTEXTSIZE	120
+#define TUTORTEXTSIZE	300
+
+#define SOUNDEFFECT_LEVELUP ""
+#define SOUNDEFFECT_MISSIONDONE ""
+#define SOUNDEFFECT_MISSIONUNLOCKED ""
+
+new Array:arrayMissionId
+new Array:arrayMissionName
 
 new Array:arrayTutorMessageText[33]
 new Array:arrayTutorMessageType[33]
@@ -41,10 +48,16 @@ public plugin_init()
 
 	gMsgTutorStart = get_user_msgid("TutorText")
 	gMsgTutorClose = get_user_msgid("TutorClose")
+
+	register_dictionary("mg_tutormessages.txt")
+
+	mg_missions_arrayid_get(int:arrayMissionId, _, int:arrayMissionName)
 }
 
 public plugin_natives()
 {
+	arrayMissionName = ArrayCreate(64)
+
 	register_native("mg_tutormessage_send", "native_send")
 	register_native("mg_tutormessage_clear", "native_clear")
 }
@@ -183,12 +196,32 @@ public native_clear(plugin_id, param_num)
 
 public mg_fw_client_levelup(id, level)
 {
-	
+	new lMessage[128]
+	formatex(lMessage, charsmax(lMessage), "%L", id, "TUTOR_TUTMSG_LEVELUP", level)
+
+	mg_tutormessage_send(id, lMessage, TUTORTYPE_GREEN, _, SOUNDEFFECT_LEVELUP)
 }
 
-public mg_fw_client_mission_done(id, missionId)
+public mg_fw_client_mission_done(id, missionId, prizeExp, prizeMP)
 {
+	new lMessage[250]
+	new lMissionName[64]
 
+	ArrayGetString(arrayMissionName, ArrayFindValue(arrayMissionId, missionId), lMissionName, charsmax(lMissionName))
+
+	formatex(lMessage, charsmax(lMessage), "%L", id, "TUTOR_TUTMSG_MISSIONCOMPLETED", id, lMissionName, prizeExp, prizeMP)
+	mg_tutormessage_send(id, lMessage, TUTORTYPE_YELLOW, _, SOUNDEFFECT_MISSIONDONE)
+}
+
+public mg_fw_client_mission_unlocked(id, missionId)
+{
+	new lMessage[250]
+	new lMissionName[64]
+
+	ArrayGetString(arrayMissionName, ArrayFindValue(arrayMissionId, missionId), lMissionName, charsmax(lMissionName))
+
+	formatex(lMessage, charsmax(lMessage), "%L", id, "TUTOR_TUTMSG_MISSIONUNLOCKED", id, lMissionName)
+	mg_tutormessage_send(id, lMessage, TUTORTYPE_YELLOW, _, SOUNDEFFECT_MISSIONDONE)
 }
 
 public client_putinserver(id)
