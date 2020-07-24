@@ -13,6 +13,7 @@
 new Array:arrayTutorMessageText
 new Array:arrayTutorMessageType
 new Array:arrayTutorMessageTime
+new Array:arrayTutorMessageSFX
 
 new gMsgTutorStart
 new gMsgTutorClose
@@ -45,6 +46,7 @@ public plugin_natives()
 	arrayTutorMessageText = ArrayCreate(TUTORTEXTSIZE)
 	arrayTutorMessageType = ArrayCreate(1)
 	arrayTutorMessageTime = ArrayCreate(1)
+	arrayTutorMessageSFX = ArrayCreate(64)
 
 	register_native("mg_tutormessage_send", "native_send")
 	register_native("mg_tutormessage_clear", "native_clear")
@@ -58,7 +60,20 @@ public plugin_precache()
 
 public check_tutor_messagelist(taskid)
 {
+	new id = taskid-TASKID_TUTOR
 
+	if(!is_user_connected(id))
+		return
+	
+	new lArraySize = ArraySize(arrayTutorMessageType)
+
+	if(lArraySize == 0)
+	{
+		userRemoveTutorMessage(id)
+		return
+	}
+
+	
 }
 
 public native_send(plugin_id, param_num)
@@ -72,8 +87,10 @@ public native_send(plugin_id, param_num)
 	get_string(2, lText, charsmax(lText))
 	new lType = get_param(3)
 	new lTime = get_param(4)
-	new lPrimary = get_param(5)
-	new lImmediately = get_param(6)
+	new lSoundEffect[64]
+	get_string(5, lSoundEffect, charsmax(lSoundEffect))
+	new lPrimary = get_param(6)
+	new lImmediately = get_param(7)
 
 	if(task_exists(TASKID_TUTOR+id))
 	{
@@ -83,6 +100,7 @@ public native_send(plugin_id, param_num)
 			{
 				remove_task(TASKID_TUTOR+id)
 				userSetTutorMessage(id, lText, lType)
+				userPlaySound(id, lSoundEffect)
 				set_task(lTime, "check_tutor_messagelist", TASKID_TUTOR+id)
 
 				return true
@@ -93,6 +111,7 @@ public native_send(plugin_id, param_num)
 				ArrayPushString(arrayTutorMessageText, lText)
 				ArrayPushCell(arrayTutorMessageType, lType)
 				ArrayPushCell(arrayTutorMessageTime, lTime)
+				ArrayPushString(arrayTutorMessageSFX, lSoundEffect)
 
 				return true
 			}
@@ -101,6 +120,7 @@ public native_send(plugin_id, param_num)
 				ArrayInsertStringBefore(arrayTutorMessageText, 0, lText)
 				ArrayInsertCellBefore(arrayTutorMessageType, 0, lType)
 				ArrayInsertCellBefore(arrayTutorMessageTime, 0, lTime)
+				ArrayInsertStringBefore(arrayTutorMessageSFX, 0, lSoundEffect)
 
 				return true
 			}
@@ -111,6 +131,7 @@ public native_send(plugin_id, param_num)
 			{
 				remove_task(TASKID_TUTOR+id)
 				userSetTutorMessage(id, lText, lType)
+				userPlaySound(id, lSoundEffect)
 				set_task(lTime, "check_tutor_messagelist", TASKID_TUTOR+id)
 
 				return true
@@ -119,6 +140,7 @@ public native_send(plugin_id, param_num)
 			ArrayPushString(arrayTutorMessageText, lText)
 			ArrayPushCell(arrayTutorMessageType, lType)
 			ArrayPushCell(arrayTutorMessageTime, lTime)
+			ArrayPushString(arrayTutorMessageSFX, lSoundEffect)
 			return true
 		}
 	}
@@ -127,6 +149,7 @@ public native_send(plugin_id, param_num)
 		ArrayPushString(arrayTutorMessageText, lText)
 		ArrayPushCell(arrayTutorMessageType, lType)
 		ArrayPushCell(arrayTutorMessageTime, lTime)
+		ArrayPushString(arrayTutorMessageSFX, lSoundEffect)
 
 		check_tutor_messagelist(TASKID_TUTOR+id)
 
@@ -142,8 +165,13 @@ public native_clear(plugin_id, param_num)
 		return false
 
 	userRemoveTutorMessage(id)
-	
+
 	return true
+}
+
+userPlaySound(id, const sound[])
+{
+	client_cmd(id, "spk ^"%s^"", sound)
 }
 
 userSetTutorMessage(id, const text[], type = (1<<3))
