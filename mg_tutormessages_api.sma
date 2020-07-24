@@ -1,5 +1,7 @@
 #include <amxmodx>
 #include <amxmisc>
+#include <mg_levelsystem_api>
+#include <mg_missions_api>
 #include <mg_tutormessages_api_const>
 
 #define PLUGIN "[MG] Tutor Messages API"
@@ -10,10 +12,10 @@
 
 #define TUTORTEXTSIZE	120
 
-new Array:arrayTutorMessageText
-new Array:arrayTutorMessageType
-new Array:arrayTutorMessageTime
-new Array:arrayTutorMessageSFX
+new Array:arrayTutorMessageText[33]
+new Array:arrayTutorMessageType[33]
+new Array:arrayTutorMessageTime[33]
+new Array:arrayTutorMessageSFX[33]
 
 new gMsgTutorStart
 new gMsgTutorClose
@@ -43,11 +45,6 @@ public plugin_init()
 
 public plugin_natives()
 {
-	arrayTutorMessageText = ArrayCreate(TUTORTEXTSIZE)
-	arrayTutorMessageType = ArrayCreate(1)
-	arrayTutorMessageTime = ArrayCreate(1)
-	arrayTutorMessageSFX = ArrayCreate(64)
-
 	register_native("mg_tutormessage_send", "native_send")
 	register_native("mg_tutormessage_clear", "native_clear")
 }
@@ -182,6 +179,32 @@ public native_clear(plugin_id, param_num)
 	userRemoveTutorMessage(id)
 
 	return true
+}
+
+public mg_fw_client_levelup(id, level)
+{
+	
+}
+
+public mg_fw_client_mission_done(id, missionId)
+{
+
+}
+
+public client_putinserver(id)
+{
+	arrayTutorMessageText[id] = ArrayCreate(TUTORTEXTSIZE)
+	arrayTutorMessageType[id] = ArrayCreate(1)
+	arrayTutorMessageTime[id] = ArrayCreate(1)
+	arrayTutorMessageSFX[id] = ArrayCreate(64)
+}
+
+public client_disconnected(id)
+{
+	ArrayDestroy(arrayTutorMessageText[id])
+	ArrayDestroy(arrayTutorMessageType[id])
+	ArrayDestroy(arrayTutorMessageTime[id])
+	ArrayDestroy(arrayTutorMessageSFX[id])
 }
 
 userPlaySound(id, const sound[])
