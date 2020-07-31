@@ -44,7 +44,7 @@ new const tutorResources[][] =
 
 public plugin_init()
 {
-    register_plugin(PLUGIN, VERSION, AUTHOR)
+	register_plugin(PLUGIN, VERSION, AUTHOR)
 
 	gMsgTutorStart = get_user_msgid("TutorText")
 	gMsgTutorClose = get_user_msgid("TutorClose")
@@ -75,7 +75,7 @@ public check_tutor_messagelist(taskid)
 	if(!is_user_connected(id))
 		return
 	
-	new lArraySize = ArraySize(arrayTutorMessageType)
+	new lArraySize = ArraySize(arrayTutorMessageType[id])
 
 	if(lArraySize == 0)
 	{
@@ -84,19 +84,19 @@ public check_tutor_messagelist(taskid)
 	}
 
 	new lText[64]
-	ArrayGetString(arrayTutorMessageText, 0, lText, charsmax(lText))
-	new lType = ArrayGetCell(arrayTutorMessageType, 0)
-	new Float:lTime = ArrayGetCell(arrayTutorMessageTime, 0)
+	ArrayGetString(arrayTutorMessageText[id], 0, lText, charsmax(lText))
+	new lType = ArrayGetCell(arrayTutorMessageType[id], 0)
+	new Float:lTime = ArrayGetCell(arrayTutorMessageTime[id], 0)
 	new lSoundEffect[64]
-	ArrayGetString(arrayTutorMessageSFX, 0, lSoundEffect, charsmax(lSoundEffect))
+	ArrayGetString(arrayTutorMessageSFX[id], 0, lSoundEffect, charsmax(lSoundEffect))
 
 	userSetTutorMessage(id, lText, lType)
 	userPlaySound(id, lSoundEffect)
 
-	ArrayDeleteItem(arrayTutorMessageText, 0)
-	ArrayDeleteItem(arrayTutorMessageType, 0)
-	ArrayDeleteItem(arrayTutorMessageTime, 0)
-	ArrayDeleteItem(arrayTutorMessageSFX, 0)
+	ArrayDeleteItem(arrayTutorMessageText[id], 0)
+	ArrayDeleteItem(arrayTutorMessageType[id], 0)
+	ArrayDeleteItem(arrayTutorMessageTime[id], 0)
+	ArrayDeleteItem(arrayTutorMessageSFX[id], 0)
 
 	set_task(lTime, "check_tutor_messagelist", taskid)
 }
@@ -131,21 +131,21 @@ public native_send(plugin_id, param_num)
 				return true
 			}
 
-			if(ArraySize(arrayTutorMessageType) == 0)
+			if(ArraySize(arrayTutorMessageType[id]) == 0)
 			{
-				ArrayPushString(arrayTutorMessageText, lText)
-				ArrayPushCell(arrayTutorMessageType, lType)
-				ArrayPushCell(arrayTutorMessageTime, lTime)
-				ArrayPushString(arrayTutorMessageSFX, lSoundEffect)
+				ArrayPushString(arrayTutorMessageText[id], lText)
+				ArrayPushCell(arrayTutorMessageType[id], lType)
+				ArrayPushCell(arrayTutorMessageTime[id], lTime)
+				ArrayPushString(arrayTutorMessageSFX[id], lSoundEffect)
 
 				return true
 			}
 			else
 			{
-				ArrayInsertStringBefore(arrayTutorMessageText, 0, lText)
-				ArrayInsertCellBefore(arrayTutorMessageType, 0, lType)
-				ArrayInsertCellBefore(arrayTutorMessageTime, 0, lTime)
-				ArrayInsertStringBefore(arrayTutorMessageSFX, 0, lSoundEffect)
+				ArrayInsertStringBefore(arrayTutorMessageText[id], 0, lText)
+				ArrayInsertCellBefore(arrayTutorMessageType[id], 0, lType)
+				ArrayInsertCellBefore(arrayTutorMessageTime[id], 0, lTime)
+				ArrayInsertStringBefore(arrayTutorMessageSFX[id], 0, lSoundEffect)
 
 				return true
 			}
@@ -162,19 +162,19 @@ public native_send(plugin_id, param_num)
 				return true
 			}
 
-			ArrayPushString(arrayTutorMessageText, lText)
-			ArrayPushCell(arrayTutorMessageType, lType)
-			ArrayPushCell(arrayTutorMessageTime, lTime)
-			ArrayPushString(arrayTutorMessageSFX, lSoundEffect)
+			ArrayPushString(arrayTutorMessageText[id], lText)
+			ArrayPushCell(arrayTutorMessageType[id], lType)
+			ArrayPushCell(arrayTutorMessageTime[id], lTime)
+			ArrayPushString(arrayTutorMessageSFX[id], lSoundEffect)
 			return true
 		}
 	}
 	else
 	{
-		ArrayPushString(arrayTutorMessageText, lText)
-		ArrayPushCell(arrayTutorMessageType, lType)
-		ArrayPushCell(arrayTutorMessageTime, lTime)
-		ArrayPushString(arrayTutorMessageSFX, lSoundEffect)
+		ArrayPushString(arrayTutorMessageText[id], lText)
+		ArrayPushCell(arrayTutorMessageType[id], lType)
+		ArrayPushCell(arrayTutorMessageTime[id], lTime)
+		ArrayPushString(arrayTutorMessageSFX[id], lSoundEffect)
 
 		check_tutor_messagelist(TASKID_TUTOR+id)
 
